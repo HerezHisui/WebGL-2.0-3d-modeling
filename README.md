@@ -6,7 +6,7 @@ An animated, interactive 3D wizard was built entirely from procedural geometry (
 
 Controls
   Drag — orbit the camera around the wizard
-  Scroll — zooming in and out
+  Scroll — zoom in and out
   Click — to cast a spell
 
 The Three Pillars
@@ -14,7 +14,7 @@ The Three Pillars
   Colors are baked per-vertex on the CPU as 0-255 bytes, packed into a Uint8Array, and uploaded as colorBuffer. The attribute is read with:
   
   
-  The true normalized flag rescales those bytes to 0.0-1.0 before the vertex shader sees them — a quarter the memory of storing floats directly. The shader forwards this as [out vec3 fragmentColor]; between the vertex and fragment stages, the rasterizer barycentrically interpolates that value across every pixel of a triangle, which is why the sphere heads and cone hats shade smoothly instead of looking flat-shaded per triangle.
+  The true normalized flag rescales those bytes to 0.0-1.0 before the vertex shader sees them — a quarter of the memory required to store floats directly. The shader forwards this as [out vec3 fragmentColor]; between the vertex and fragment stages, the rasterizer barycentrically interpolates that value across every pixel of a triangle, which is why the sphere heads and cone hats shade smoothly instead of looking flat-shaded per triangle.
   
 The Spatial Journey
   Vertices start in Model Space (local coordinates like the head sphere's center). Each frame, uModel — built fresh from the current idle bob/sway/spin — promotes them to World Space. uViewProjection (view matrix × perspective matrix) then carries them to Clip Space: 
@@ -29,15 +29,15 @@ Reflection & AI Prompt Log
 Reflection
     Write a short paragraph on the challenges of debugging the graphics pipeline. Contrast the "silent failures" of the GPU (where a single wrong bit results in a blank screen) with standard JavaScript debugging.
     
-    Debugging this was rough in a way normal JS debugging isn't. Usually when I break something, the console yells at me with a red error and a line number, and I can follow the breadcrumbs back to my mistake. WebGL just doesn't do that — most of the time it's a blank canvas with zero explanation, and wrong stride, a forgotten normalize flag, and a bad matrix order can all cause that same blank screen. That's actually why the "make your errors loud" tip clicked for me — setting an obnoxious clear color instead of black at least let me tell "nothing is drawing" apart from "something is drawing wrong." After that, it was just guess-and-check: shader logs, link status, attribute locations, buffer contents, and finally the matrix math, since the GPU was never going just to tell me what I broke. 
+    Debugging this was rough in a way normal JS debugging isn't. Usually when I break something, the console yells at me with a red error and a line number, and I can follow the breadcrumbs back to my mistake. WebGL doesn't do that — most of the time it's a blank canvas with zero explanation, and wrong stride, a forgotten normalize flag, and a bad matrix order can all cause that same blank screen. That's actually why the "make your errors loud" tip clicked for me — setting an obnoxious clear color instead of black at least let me tell "nothing is drawing" apart from "something is drawing wrong." After that, it was just guess-and-check: shader logs, link status, attribute locations, buffer contents, and finally the matrix math, since the GPU was never going just to tell me what I broke. 
 
 AI Prompt Log
 
 | Prompt Provided | Specific Technical Adjustment Made to Output |
 |-----------------------------|-----------------------------------|     
-| "make a wizard" | Wrote buildWizardGeometry() composing the figure from two reusable primitives — addFrustumSide() (cone                     frustum, used for robe/beard/hat/staff) and addSphere() (UV sphere, used for head/orb) — with outward                      normals derived via cross product of the slant and circumferential tangent vectors. |
+| "make a wizard" | Wrote buildWizardGeometry() composing the figure from two reusable primitives — addFrustumSide() (cone frustum, used for robe/beard/hat/staff) and addSphere() (UV sphere, used for head/orb) — with outward normals derived via cross product of the slant and circumferential tangent vectors. |
     
-| "interact with my wizard" | Added orbit camera via pointerdown/pointermove/pointerup (yaw/pitch from drag delta) and                                   wheel (distance clamp), replacing the fixed eye array with spherical-coordinate camera                                     position computed per frame. |
+| "interact with my wizard" | Added orbit camera via pointerdown/pointermove/pointerup (yaw/pitch from drag delta) and wheel (distance clamp), replacing the fixed eye array with spherical-coordinate camera position computed per frame. |
     
-| "eyes that move/track the camera " | Added eye-white spheres tagged with socket centers; pupils rendered as a separate                                          point-sprite shader, world position computed via mat4TransformPoint() projected                                            onto the model matrix's own right/up axis columns. | 
+| "eyes that move/track the camera " | Added eye-white spheres tagged with socket centers; pupils rendered as a separate point-sprite shader, world position computed via mat4TransformPoint() projected onto the model matrix's own right/up axis columns. | 
 
