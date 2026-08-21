@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>Animated 3D Pyramid - WebGL2 Demo</title>
+<style>
+  html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    background: #0f0f10;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-family: system-ui, sans-serif;
+    color: #eee;
+  }
+  h1 {
+    font-size: 1rem;
+    font-weight: 500;
+    margin: 12px 0;
+    color: #ccc;
+  }
+  canvas {
+    width: 90vw;
+    max-width: 800px;
+    height: 60vh;
+    background: salmon; /* visible if WebGL fails to draw, useful for debugging */
+    border-radius: 8px;
+    display: block;
+  }
+  #error-box {
+    color: #ff6b6b;
+    font-size: 0.85rem;
+    margin-top: 10px;
+    max-width: 800px;
+    text-align: center;
+  }
+</style>
+</head>
+<body>
+  <h1>Animated 3D Cube — Revolving Camera Demo</h1>
+  <canvas id="demo-canvas"></canvas>
+  <div id="error-box"></div>
+
+  <script src="simulation.js"></script>
+</body>
+</html>
