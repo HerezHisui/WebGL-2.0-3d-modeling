@@ -7,7 +7,7 @@ An animated, interactive 3D wizard was built entirely from procedural geometry (
 Controls
   Drag — orbit the camera around the wizard
   Scroll — zoom in and out
-  Click — to cast a spell
+  Click — cast a spell
 
 The Three Pillars
   Injecting Color
@@ -36,8 +36,6 @@ AI Prompt Log
 | Prompt Provided | Specific Technical Adjustment Made to Output |
 |-----------------------------|-----------------------------------|     
 | "make a wizard" | Wrote buildWizardGeometry() composing the figure from two reusable primitives — addFrustumSide() (cone frustum, used for robe/beard/hat/staff) and addSphere() (UV sphere, used for head/orb) — with outward normals derived via cross product of the slant and circumferential tangent vectors. |
-    
 | "interact with my wizard" | Added orbit camera via pointerdown/pointermove/pointerup (yaw/pitch from drag delta) and wheel (distance clamp), replacing the fixed eye array with spherical-coordinate camera position computed per frame. |
-    
 | "eyes that move/track the camera " | Added eye-white spheres tagged with socket centers; pupils rendered as a separate point-sprite shader, world position computed via mat4TransformPoint() projected onto the model matrix's own right/up axis columns. | 
 
