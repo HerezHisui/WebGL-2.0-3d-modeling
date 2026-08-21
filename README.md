@@ -6,23 +6,29 @@ An animated, interactive 3D wizard was built entirely from procedural geometry (
 
 Controls
   Drag — orbit the camera around the wizard
+  
   Scroll — zoom in and out
+  
   Click — cast a spell
 
 The Three Pillars
+
   Injecting Color
+
   Colors are baked per-vertex on the CPU as 0-255 bytes, packed into a Uint8Array, and uploaded as colorBuffer. The attribute is read with:
   
   
   The true normalized flag rescales those bytes to 0.0-1.0 before the vertex shader sees them — a quarter of the memory required to store floats directly. The shader forwards this as [out vec3 fragmentColor]; between the vertex and fragment stages, the rasterizer barycentrically interpolates that value across every pixel of a triangle, which is why the sphere heads and cone hats shade smoothly instead of looking flat-shaded per triangle.
   
 The Spatial Journey
+
   Vertices start in Model Space (local coordinates like the head sphere's center). Each frame, uModel — built fresh from the current idle bob/sway/spin — promotes them to World Space. uViewProjection (view matrix × perspective matrix) then carries them to Clip Space: 
   
   The Z-axis drives draw order: the perspective matrix writes -1 into row 3 so a vertex's clip-space W ends up tied to its view-space depth, which is what makes distant geometry shrink correctly during the perspective divide. gl.enable(gl.DEPTH_TEST) then uses that resolved Z per-pixel so nearer triangles (like the beard) correctly occlude farther ones (like the robe collar), regardless of draw order. 
   
 Efficiency and State
-    A VAO is a saved "blueprint" of which buffer feeds which attribute, with what type/stride/offset — set up once instead of repeated before every draw. Stride is the byte gap between one vertex's data and the next in a buffer; offset is where a given attribute starts within that gap. Here, every attribute lives in its own dedicated buffer rather than being interleaved together, so both are 0 for all eight attributes — the pattern only needs nonzero values when multiple attributes are packed into a single shared buffer. This project uses three VAOs: wizardVAO, particleVAO, eyeVAO, one per shader program. Without VAOs, forgetting to reconfigure an attribute before a draw call can silently leak one object's buffer state into another's — the "Global State Trap." VAOs fix this by isolating each object's setup, and the render loop unbinds (gl.bindVertexArray(null)) after every draw call as a "clean slate" habit so no state is left implicitly active for the next draw to inherit. 
+
+  A VAO is a saved "blueprint" of which buffer feeds which attribute, with what type/stride/offset — set up once instead of repeated before every draw. Stride is the byte gap between one vertex's data and the next in a buffer; offset is where a given attribute starts within that gap. Here, every attribute lives in its own dedicated buffer rather than being interleaved together, so both are 0 for all eight attributes — the pattern only needs nonzero values when multiple attributes are packed into a single shared buffer. This project uses three VAOs: wizardVAO, particleVAO, eyeVAO, one per shader program. Without VAOs, forgetting to reconfigure an attribute before a draw call can silently leak one object's buffer state into another's — the "Global State Trap." VAOs fix this by isolating each object's setup, and the render loop unbinds (gl.bindVertexArray(null)) after every draw call as a "clean slate" habit so no state is left implicitly active for the next draw to inherit. 
     
 Reflection & AI Prompt Log
 
